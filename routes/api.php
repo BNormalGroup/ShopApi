@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\CategoriesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,11 @@ group(function () {
     Route::post('/', [CategoriesController::class, 'store']);
     Route::post('/{category}', [CategoriesController::class, 'update']);
     Route::delete('/{category}', [CategoriesController::class, 'delete']);
+});
+Route::prefix('/brands')->
+group(function () {
+    Route::get('/', [BrandsController::class, 'index']);
+    Route::post('/', [BrandsController::class, 'store']);
+    Route::post('/{brand}', [BrandsController::class, 'update']);
+    Route::delete('/{brand}', [BrandsController::class, 'delete']);
 });
