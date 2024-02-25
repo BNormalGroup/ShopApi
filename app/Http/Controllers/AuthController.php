@@ -15,7 +15,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login','register']]);
     }
     /**
      * Get the authenticated User.
@@ -37,7 +37,7 @@ class AuthController extends Controller
             'birthday' => 'required|string',
             'isAdmin' => 'required|bool',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'password' => 'required|string|min:6',
         ]);
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
