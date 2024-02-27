@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class HistoryOrders extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['item_id', 'user_id'];
 }

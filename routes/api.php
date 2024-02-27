@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ group(function () {
     Route::post('/{category}', [CategoriesController::class, 'update']);
     Route::delete('/{category}', [CategoriesController::class, 'delete']);
 });
+
 Route::prefix('/brands')->
 group(function () {
     Route::get('/', [BrandsController::class, 'index']);
@@ -31,6 +33,13 @@ group(function () {
     Route::post('/{brand}', [BrandsController::class, 'update']);
     Route::delete('/{brand}', [BrandsController::class, 'delete']);
 });
+
+Route::prefix('/items')->
+group(function () {
+    Route::post('/', [ItemController::class, 'store']);
+    Route::get('/a/{id}', [ItemController::class, 'show']);
+});
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
