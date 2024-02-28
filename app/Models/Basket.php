@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Basket extends Model
 {
     use HasFactory;
+    protected $table = 'basket';
     protected $fillable = ['user_id', 'item_id'];
 
 }

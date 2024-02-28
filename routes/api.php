@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BasketController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ItemController;
@@ -41,6 +42,13 @@ group(function () {
     Route::get('/show/{id}', [ItemController::class, 'show']);
     Route::post('/{id}', [ItemController::class, 'update']);
     Route::delete('/{id}', [ItemController::class, 'delete']);
+});
+
+Route::prefix('/basket')->
+group(function () {
+    Route::post('/', [BasketController::class, 'store']);
+    Route::delete('/{id}', [BasketController::class, 'delete']);
+    Route::get('/show/{user_id}', [BasketController::class, 'show']);
 });
 
 Route::group([
