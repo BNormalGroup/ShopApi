@@ -36,8 +36,11 @@ group(function () {
 
 Route::prefix('/items')->
 group(function () {
+    Route::get('/', [ItemController::class, 'index']);
     Route::post('/', [ItemController::class, 'store']);
-    Route::get('/a/{id}', [ItemController::class, 'show']);
+    Route::get('/show/{id}', [ItemController::class, 'show']);
+    Route::post('/{id}', [ItemController::class, 'update']);
+    Route::delete('/{id}', [ItemController::class, 'delete']);
 });
 
 Route::group([

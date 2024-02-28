@@ -6,13 +6,20 @@ use App\Models\ImagesItem;
 use App\Models\Items;
 use Illuminate\Http\Request;
 use App\Helpers\ImageHelper;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 class ItemController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['index','store','update', 'delete','show']]);
     }
-
+    public function index()
+    {
+        $items = Items::get();
+        return response()->json($items, 200);
+    }
     public function store(Request $request)
     {
         $input = $request->all();
@@ -43,7 +50,36 @@ class ItemController extends Controller
         ]);
         return $item;
     }
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'price' => 'required|int',
+            'color' => 'required|string',
+            'sex' => 'required|string',
+            'category_id' => 'required|int',
+            'brand_id' => 'required|int'
+        ]);
+        $item = Items::findOrFail($id);
+        if ($request->has("image")) {
+            if ($item["image"] != null && $item["image"] != "") {
+                $imagePath = public_path('uploads/' . $item->image);
 
+                if (Storage::disk('public')->exists($item->image)) {
+                    Storage::disk('public')->delete($item->image);
+                } elseif (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+            $filename = uniqid() . '.' . $request->file("image")->getClientOriginalExtension();
+            $request->file('image')->move(public_path('uploads'), $filename);
+            $validatedData["image"] = $filename;
+        }
+        $item->update($validatedData);
+
+        return response()->json($item);
+    }
     public function show($id)
     {
         $product = Items::where('id', $id)->first();
@@ -60,5 +96,41 @@ class ItemController extends Controller
             return response()->json(['message' => '404'], 404);
         }
     }
+    public function delete($id)
+    {
+        $imagesIds = DB::table('images')
+            ->where('item_id', $id)
+            ->pluck('id');
 
+        foreach ($imagesIds as $imageIdId) {
+            $imageDelete = DB::table('images')
+                ->where('id', $imageIdId)
+                ->first();
+
+            $imagePath = public_path('uploads/' . $imageDelete->url);
+
+            if (Storage::disk('public')->exists($imageDelete->url)) {
+                Storage::disk('public')->delete($imageDelete->url);
+            } elseif (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+            DB::table('images')
+                ->where('id', $imageIdId)
+                ->delete();
+        }
+        $DeleteItem = DB::table('items')->where('id', $id)->first();
+        $imagePath = public_path('uploads/' . $DeleteItem->image);
+
+        if (Storage::disk('public')->exists($DeleteItem->image)) {
+            Storage::disk('public')->delete($DeleteItem->image);
+        } elseif (file_exists($imagePath)) {
+            unlink($imagePath);
+        } else {
+            return response()->json(['message' => 'Missing file'], 422);
+        }
+        DB::table('items')
+            ->where('id', $id)
+            ->delete();
+        return response()->json(['message' => 'Done'], 200);
+    }
 }
