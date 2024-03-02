@@ -9,4 +9,9 @@ class Bannes extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'reason'];
+
+    public function user()
+    {
+        return $this->belongsTo(Users::class, 'user_id', 'id');
+    }
 }
