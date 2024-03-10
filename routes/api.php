@@ -5,6 +5,8 @@ use App\Http\Controllers\BasketController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\LikesController;
+use App\Http\Controllers\UserBannesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +53,23 @@ group(function () {
     Route::post('/', [BasketController::class, 'store']);
     Route::delete('/{id}', [BasketController::class, 'delete']);
     Route::get('/show/{user_id}', [BasketController::class, 'show']);
+});
+
+Route::prefix('/likes')->
+group(function () {
+    Route::get('/{item}', [LikesController::class, 'index']);
+    Route::post('/', [LikesController::class, 'store']);
+    Route::post('/{like}', [LikesController::class, 'update']);
+    Route::delete('/{like}', [LikesController::class, 'delete']);
+});
+
+Route::prefix('/bans')->
+group(function () {
+    Route::get('/', [UserBannesController::class, 'index']);
+    Route::get('/{user}', [UserBannesController::class, 'index_by_user']);
+    Route::post('/', [UserBannesController::class, 'store']);
+    Route::post('/{ban}', [UserBannesController::class, 'update']);
+    Route::delete('/{ban}', [UserBannesController::class, 'delete']);
 });
 
 Route::group([

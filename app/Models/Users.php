@@ -37,6 +37,15 @@ class Users extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
+    public function bans()
+    {
+        return $this->hasMany(Bannes::class, 'user_id', 'id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(HistoryOrders::class, 'user_id','id');
+    }
     /**
      * The attributes that should be cast.
      *
