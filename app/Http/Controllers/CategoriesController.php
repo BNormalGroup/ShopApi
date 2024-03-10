@@ -9,7 +9,7 @@ class CategoriesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show']]);
     }
 
     public function index()
@@ -24,7 +24,15 @@ class CategoriesController extends Controller
         $category = Categories::create($data);
         return response()->json($category, 200);
     }
-
+    public function show($id)
+    {
+        $category = Categories::where('id', $id)->first();
+        if ($category != null) {
+            return response()->json($category, 200);
+        } else {
+            return response()->json(['message' => '404'], 404);
+        }
+    }
     public function update(UpdateRequest $request, Categories $category)
     {
         $data = $request->validated();
