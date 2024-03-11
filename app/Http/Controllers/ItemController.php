@@ -80,6 +80,29 @@ class ItemController extends Controller
 
         return response()->json($item);
     }
+    public function AddImage(Request $request)
+    {
+        $input = $request->all();
+        if (!$request->has('url')) {
+            return response()->json(['message' => 'Missing file'], 422);
+        }
+        $year = date('Y');
+        $month = date('m');
+        $basePath = public_path('uploads/' . $year . '/' . $month);
+        if (!file_exists($basePath)) {
+            mkdir($basePath, 0777, true);
+        }
+        $filename = uniqid() . '.' . $request->file("url")->getClientOriginalExtension();
+        $request->file('url')->move($basePath, $filename);
+        $input["url"] = $year . '/' . $month . '/' . $filename;
+        $imageUrl = url($input["url"]);
+        $item = ImagesItem::create([
+            'item_id' => $request->item_id,
+            'url' => $imageUrl
+        ]);
+        return $item;
+    }
+
     public function show($id)
     {
         $product = Items::where('id', $id)->first();
