@@ -46,6 +46,7 @@ group(function () {
     Route::get('/show/{id}', [ItemController::class, 'show']);
     Route::post('/{id}', [ItemController::class, 'update']);
     Route::delete('/{id}', [ItemController::class, 'delete']);
+    Route::delete('/deleteImage/{image}', [ItemController::class, 'DeleteImage']);
 });
 
 Route::prefix('/basket')->
