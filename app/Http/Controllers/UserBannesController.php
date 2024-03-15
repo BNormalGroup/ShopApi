@@ -17,9 +17,15 @@ class UserBannesController extends Controller
 
     public function index()
     {
-        $bans = Bannes::get();
-        return response()->json($bans, 200);
+        $users = Users::with('bans')->get()->map(function ($user) {
+            $user->isBanned = $user->bans->isNotEmpty(); // Додаємо поле isBanned згідно з наявністю бану
+            return $user;
+        });
+
+        return response()->json($users, 200);
     }
+
+
 
     public function index_by_user(Users $user)
     {
