@@ -25,7 +25,7 @@ class StoreRequest extends FormRequest
             'name' => 'required|max:30|regex:/^[\pL\s]+$/u',
             'parent_id' => 'integer|nullable',
             'description' => 'required|max:500|regex:/^[\pL\s]+$/u',
-            'slug' => 'required',
+            'slug' => 'required|max:30|regex:/^[\pL\s]+$/u'
         ];
     }
 }
