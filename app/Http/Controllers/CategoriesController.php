@@ -9,13 +9,41 @@ class CategoriesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'getCategoriesWithChildren']]);
     }
 
     public function index()
     {
-        $categories = Categories::where('parent_id', null)->orderByDesc('id')->get();
+        $categories = Categories::orderByDesc('id')->get();
         return response()->json($categories, 200);
+    }
+
+    public function getCategoriesWithChildren()
+    {
+        // Отримуємо всі головні категорії
+        $categories = Categories::where('parent_id', null)->orderByDesc('id')->get();
+
+        // Для кожної головної категорії викликаємо метод, що рекурсивно отримує її дочірні категорії
+        $categoriesWithChildren = $categories->map(function ($category) {
+            $category->children = $this->getChildren($category);
+            return $category;
+        });
+
+        // Повертаємо результат у форматі JSON
+        return response()->json($categoriesWithChildren, 200);
+    }
+
+    protected function getChildren($category)
+    {
+        // Отримуємо всі дочірні категорії поточної категорії
+        $children = Categories::where('parent_id', $category->id)->get();
+
+        // Для кожної дочірньої категорії викликаємо метод, що рекурсивно отримує її дочірні категорії
+        $children->each(function ($childCategory) {
+            $childCategory->children = $this->getChildren($childCategory);
+        });
+
+        return $children;
     }
 
     public function store(StoreRequest $request)

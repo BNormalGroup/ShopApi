@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/categories')->
 group(function () {
     Route::get('/', [CategoriesController::class, 'index']);
+    Route::get('/child', [CategoriesController::class, 'getCategoriesWithChildren']);
     Route::post('/', [CategoriesController::class, 'store']);
     Route::post('/{category}', [CategoriesController::class, 'update']);
     Route::get('/show/{id}', [CategoriesController::class, 'show']);
