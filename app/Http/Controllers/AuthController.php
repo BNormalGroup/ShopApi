@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bannes;
 use App\Models\Users;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -112,10 +113,13 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $isBanned = Bannes::where('user_id', auth()->user()->id)->exists();
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user(),
+            "isBanned" => $isBanned
         ]);
     }
 }
