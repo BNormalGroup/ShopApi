@@ -32,7 +32,6 @@ class ItemController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'color' => $request->color,
             'sex' => $request->sex,
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id
