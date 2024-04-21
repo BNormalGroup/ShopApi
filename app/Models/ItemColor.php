@@ -9,5 +9,5 @@ class ItemColor extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id', 'rgb', 'name','item_id'];
+    protected $fillable = ['id', 'image', 'name','item_id'];
 }
