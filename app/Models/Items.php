@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Items extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'price', 'color', 'brand_id', 'category_id', 'sex', 'image'];
+    protected $fillable = ['name', 'description', 'price', 'brand_id', 'category_id', 'sex', 'image'];
     public function likes()
     {
         return $this->hasMany('App\Models\Likes', 'item_id');
