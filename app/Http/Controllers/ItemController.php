@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ImagesItem;
+use App\Models\ItemColor;
 use App\Models\Items;
+use App\Models\ItemSize;
 use Illuminate\Http\Request;
-use App\Helpers\ImageHelper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,19 +25,9 @@ class ItemController extends Controller
 
     public function store(Request $request)
     {
-        $input = $request->all();
-        if (!$request->has('images')) {
+        if (!$request->has('images') || !$request->has('image')) {
             return response()->json(['message' => 'Missing file'], 422);
         }
-        $item = Items::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'sex' => $request->sex,
-            'category_id' => $request->category_id,
-            'brand_id' => $request->brand_id
-        ]);
-
         $dir = $_SERVER['DOCUMENT_ROOT'];
         $year = date('Y');
         $month = date('m');
@@ -45,7 +36,36 @@ class ItemController extends Controller
         if (!file_exists($basePath)) {
             mkdir($basePath, 0777, true);
         }
-        foreach ($input["images"] as $index => $image) {
+        $imageMain = $request->image;
+        $mainFileName = uniqid() . '.' . $imageMain->getClientOriginalExtension();
+        $imageMain->move($basePath, $mainFileName);
+        $item = Items::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'sex' => $request->sex,
+            'category_id' => $request->category_id,
+            'brand_id' => $request->brand_id,
+            'image' => $imageMain
+        ]);
+        foreach ($request['sizes'] as $color)
+        {
+            ItemSize::create([
+                'item_id' => $item->id,
+                'size' => $color->size
+            ]);
+        }
+
+        foreach ($request['colors'] as $color)
+        {
+            ItemColor::create([
+                'item_id' => $item->id,
+                'rgb' => $color->rgb,
+                'name' => $color->name
+            ]);
+        }
+
+        foreach ($request["images"] as $image) {
             $filename = uniqid() . '.' . $image->getClientOriginalExtension();
             $image->move($basePath, $filename);
             ImagesItem::create([
@@ -56,7 +76,7 @@ class ItemController extends Controller
 
         return $item;
     }
-
+    //@todo make update with new data
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
@@ -106,30 +126,6 @@ class ItemController extends Controller
         return response()->json(['message'=>'done'],200);
     }
 
-    public function AddImage(Request $request)
-    {
-        $input = $request->all();
-        if (!$request->has('url')) {
-            return response()->json(['message' => 'Missing file'], 422);
-        }
-        $year = date('Y');
-        $month = date('m');
-        $basePath = public_path('uploads/' . $year . '/' . $month);
-        if (!file_exists($basePath)) {
-            mkdir($basePath, 0777, true);
-        }
-        ////////////////////////////////////////
-        $filename = uniqid() . '.' . $request->file("url")->getClientOriginalExtension();
-        $request->file('url')->move($basePath, $filename);
-        $input["url"] = $year . '/' . $month . '/' . $filename;
-        $imageUrl = url($input["url"]);
-        $item = ImagesItem::create([
-            'item_id' => $request->item_id,
-            'url' => $imageUrl
-        ]);
-        return $item;
-    }
-
     public function show($id)
     {
         $product = Items::where('id', $id)->first();
@@ -146,7 +142,7 @@ class ItemController extends Controller
             return response()->json(['message' => '404'], 404);
         }
     }
-
+//@todo make delete with image/sizes/colors
     public function delete($id)
     {
         $imagesIds = DB::table('images')
