@@ -39,29 +39,33 @@ class ItemController extends Controller
         $imageMain = $request->image;
         $mainFileName = uniqid() . '.' . $imageMain->getClientOriginalExtension();
         $imageMain->move($basePath, $mainFileName);
+        $sex = ($request->sex == 'male' || $request->sex == 'female') ? $request->sex : 'unisex';
         $item = Items::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'sex' => $request->sex,
+            'sex' => $sex,
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
             'image' => $imageMain
         ]);
-        foreach ($request['sizes'] as $color)
+
+        foreach ($request['sizes'] as $size)
         {
             ItemSize::create([
                 'item_id' => $item->id,
-                'size' => $color->size
+                'size' => $size['size']
             ]);
         }
-
         foreach ($request['colors'] as $color)
         {
+            $imageColor = $color['image'];
+            $filename = uniqid() . '.' . $imageColor->getClientOriginalExtension();
+            $imageColor->move($basePath, $filename);
             ItemColor::create([
                 'item_id' => $item->id,
-                'rgb' => $color->rgb,
-                'name' => $color->name
+                'image' => $imageColor,
+                'name' => $color['name']
             ]);
         }
 
