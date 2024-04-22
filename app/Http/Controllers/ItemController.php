@@ -39,7 +39,7 @@ class ItemController extends Controller
         $imageMain = $request->image;
         $mainFileName = uniqid() . '.' . $imageMain->getClientOriginalExtension();
         $imageMain->move($basePath, $mainFileName);
-        $sex = ($request->sex == 'male' || $request->sex == 'female') ? $request->sex : 'unisex';
+        $sex = ($request->sex == 'man' || $request->sex == 'woman') ? $request->sex : 'unisex';
         $item = Items::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -134,12 +134,17 @@ class ItemController extends Controller
     {
         $product = Items::where('id', $id)->first();
         $images = ImagesItem::where('item_id', $id)->get();
+        $sizes = ItemSize::where('item_id', $id)->get();
+        $colors = ItemColor::where('item_id', $id)->get();
+
         if ($product != null) {
             return response()->json([
                 'status' => 200,
                 'items_data' => [
                     'product' => $product,
-                    'images' => $images
+                    'images' => $images,
+                    'sizes' => $sizes,
+                    'colors' => $colors
                 ]
             ]);
         } else {
