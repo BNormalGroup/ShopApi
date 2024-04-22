@@ -39,7 +39,7 @@ class ItemController extends Controller
         $imageMain = $request->image;
         $mainFileName = uniqid() . '.' . $imageMain->getClientOriginalExtension();
         $imageMain->move($basePath, $mainFileName);
-        $sex = ($request->sex == 'male' || $request->sex == 'female') ? $request->sex : 'unisex';
+        $sex = ($request->sex == 'Man' || $request->sex == 'Woman') ? $request->sex : 'Unisex';
         $item = Items::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -47,7 +47,7 @@ class ItemController extends Controller
             'sex' => $sex,
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
-            'image' => $imageMain
+            'image' => $year . '/' . $month . '/' . $mainFileName
         ]);
 
         foreach ($request['sizes'] as $size)
@@ -60,11 +60,11 @@ class ItemController extends Controller
         foreach ($request['colors'] as $color)
         {
             $imageColor = $color['image'];
-            $filename = uniqid() . '.' . $imageColor->getClientOriginalExtension();
-            $imageColor->move($basePath, $filename);
+            $fileNameColor = uniqid() . '.' . $imageColor->getClientOriginalExtension();
+            $imageColor->move($basePath, $fileNameColor);
             ItemColor::create([
                 'item_id' => $item->id,
-                'image' => $imageColor,
+                'image' => $year . '/' . $month . '/' . $fileNameColor,
                 'name' => $color['name']
             ]);
         }
@@ -134,13 +134,16 @@ class ItemController extends Controller
     {
         $product = Items::where('id', $id)->first();
         $images = ImagesItem::where('item_id', $id)->get();
+        $sizes = ItemSize::where('item_id', $id)->get();
+        $colors = ItemColor::where('item_id', $id)->get();
+
         if ($product != null) {
             return response()->json([
                 'status' => 200,
-                'items_data' => [
-                    'product' => $product,
-                    'images' => $images
-                ]
+                'product' => $product,
+                'images' => $images,
+                'sizes' => $sizes,
+                'colors' => $colors
             ]);
         } else {
             return response()->json(['message' => '404'], 404);
