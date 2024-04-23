@@ -45,6 +45,7 @@ class ItemController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'sex' => $sex,
+            'texture' => $request->texture,
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
             'image' => $year . '/' . $month . '/' . $mainFileName
