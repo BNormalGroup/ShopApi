@@ -39,7 +39,7 @@ class ItemController extends Controller
         $imageMain = $request->image;
         $mainFileName = uniqid() . '.' . $imageMain->getClientOriginalExtension();
         $imageMain->move($basePath, $mainFileName);
-        $sex = ($request->sex == 'Man' || $request->sex == 'Woman') ? $request->sex : 'Unisex';
+        $sex = ($request->sex === 'man' || $request->sex === 'woman') ? $request->sex : 'unisex';
         $item = Items::create([
             'name' => $request->name,
             'description' => $request->description,
