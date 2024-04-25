@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Categories\StoreRequest;
 use App\Http\Requests\Categories\UpdateRequest;
 use App\Models\Categories;
+use App\Models\Items;
 
 class CategoriesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'getCategoriesWithChildren']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'getCategoriesWithChildren', 'getCategoryItemIds']]);
     }
 
     public function index()
@@ -44,6 +45,17 @@ class CategoriesController extends Controller
         });
 
         return $children;
+    }
+
+    public function getCategoryItemIds($id)
+    {
+        // Отримати всі категорії, які мають вказаний батьківський ID (включно з вказаним)
+        $childCategoriesIds = Categories::where('id', $id)->orWhere('parent_id', $id)->pluck('id');
+
+        // Знайти всі ідентифікатори товарів, які належать до отриманих категорій
+        $itemIds = Items::whereIn('category_id', $childCategoriesIds)->pluck('id')->toArray();
+
+        return response()->json($itemIds, 200);
     }
 
     public function store(StoreRequest $request)
