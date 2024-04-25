@@ -39,7 +39,7 @@ class ItemController extends Controller
         $imageMain = $request->image;
         $mainFileName = uniqid() . '.' . $imageMain->getClientOriginalExtension();
         $imageMain->move($basePath, $mainFileName);
-        $sex = ($request->sex == 'Man' || $request->sex == 'Woman') ? $request->sex : 'Unisex';
+        $sex = ($request->sex == 'man' || $request->sex == 'woman') ? $request->sex : 'unisex';
         $item = Items::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -79,7 +79,7 @@ class ItemController extends Controller
             ]);
         }
 
-        return $item;
+        return response()->json($item, 200);
     }
     //@todo make update with new data
     public function update(Request $request, $id)
@@ -173,7 +173,8 @@ class ItemController extends Controller
                 ->where('id', $imageIdId)
                 ->delete();
         }
-
+        DB::table('item_colors')->where('item_id', $id)->delete();
+        DB::table('item_sizes')->where('item_id', $id)->delete();
         DB::table('items')
             ->where('id', $id)
             ->delete();
