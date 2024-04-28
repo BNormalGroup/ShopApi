@@ -65,6 +65,7 @@ group(function () {
     Route::get('/show/{id}', [LikesController::class, 'show']);
     Route::post('/{like}', [LikesController::class, 'update']);
     Route::delete('/{like}', [LikesController::class, 'delete']);
+    Route::post('/check', [LikesController::class, 'isLiked']);
 });
 
 Route::prefix('/bans')->
