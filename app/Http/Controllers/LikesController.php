@@ -12,7 +12,7 @@ class LikesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show']]);
     }
 
     public function index(Items $item)
@@ -26,6 +26,12 @@ class LikesController extends Controller
         $data = $request->validated();
         $like = Likes::create($data);
         return response()->json($like, 200);
+    }
+
+    public function show($userId)
+    {
+      $data = Likes::where('userId',$userId)->get();
+      return response()->json($data,200);
     }
 
     public function update(UpdateRequest $request, Likes $like)

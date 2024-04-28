@@ -62,6 +62,7 @@ Route::prefix('/likes')->
 group(function () {
     Route::get('/{item}', [LikesController::class, 'index']);
     Route::post('/', [LikesController::class, 'store']);
+    Route::get('/show/{id}', [LikesController::class, 'show']);
     Route::post('/{like}', [LikesController::class, 'update']);
     Route::delete('/{like}', [LikesController::class, 'delete']);
 });

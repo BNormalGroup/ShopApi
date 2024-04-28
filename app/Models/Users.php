@@ -19,6 +19,7 @@ class Users extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'lastName',
         'firstName',
         'birthday',
@@ -73,12 +74,16 @@ class Users extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
+        $isBanned = Bannes::where('user_id', $this->id)->exists();
+
         return [
+            "id" => $this->id,
             "email" => $this->email,
             "firstName" => $this->firstName,
             "isAdmin" => $this->isAdmin,
             "lastName" => $this->lastName,
-            "birthday" => $this->birthday
+            "birthday" => $this->birthday,
+            "isBanned" => $isBanned
         ];
     }
 }
