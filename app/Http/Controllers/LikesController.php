@@ -16,7 +16,7 @@ class LikesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'check']]);
     }
 
     public function index(Items $item)
@@ -66,7 +66,7 @@ class LikesController extends Controller
         return response()->json(['message'=>'done'],200);
     }
 
-    public function isLiked (Request $request)
+    public function check (Request $request)
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|integer',
@@ -78,7 +78,6 @@ class LikesController extends Controller
         $like = Likes::where('user_id', $request->input('user_id'))
             ->where('item_id', $request->input('item_id'))
             ->first();
-
         if ($like) {
             return response()->json(['liked' => true], 200);
         } else {
