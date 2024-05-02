@@ -53,15 +53,13 @@ class ItemController extends Controller
             'image' => $year . '/' . $month . '/' . $mainFileName
         ]);
 
-        foreach ($request['sizes'] as $size)
-        {
+        foreach ($request['sizes'] as $size) {
             ItemSize::create([
                 'item_id' => $item->id,
                 'size' => $size['size']
             ]);
         }
-        foreach ($request['colors'] as $color)
-        {
+        foreach ($request['colors'] as $color) {
             $imageColor = $color['image'];
             $fileNameColor = uniqid() . '.' . $imageColor->getClientOriginalExtension();
             $imageColor->move($basePath, $fileNameColor);
@@ -83,6 +81,7 @@ class ItemController extends Controller
 
         return response()->json($item, 200);
     }
+
     //@todo make update with new data
     public function update(Request $request, $id)
     {
@@ -90,19 +89,40 @@ class ItemController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'price' => 'required|int',
-            'color' => 'required|string',
+            'texture' => 'required|string',
             'sex' => 'required|string',
             'category_id' => 'required|int',
             'brand_id' => 'required|int'
         ]);
-        $item = Items::findOrFail($id);
-        if ($request->has("images")) {
-            // Запис та добавлення нових фото
-            $dir = $_SERVER['DOCUMENT_ROOT'];
-            $year = date('Y');
-            $month = date('m');
-            $basePath = $dir . '/uploads/' . $year . '/' . $month;
 
+        $dir = $_SERVER['DOCUMENT_ROOT'];
+        $year = date('Y');
+        $month = date('m');
+        $basePath = $dir . '/uploads/' . $year . '/' . $month;
+
+        $item = Items::findOrFail($id);
+        if ($request->has("sizes")) {
+            foreach ($request['sizes'] as $size) {
+                ItemSize::create([
+                    'item_id' => $item->id,
+                    'size' => $size['size']
+                ]);
+            }
+        }
+        if ($request->has("colors")) {
+            foreach ($request['colors'] as $color) {
+                $imageColor = $color['image'];
+                $fileNameColor = uniqid() . '.' . $imageColor->getClientOriginalExtension();
+                $imageColor->move($basePath, $fileNameColor);
+                ItemColor::create([
+                    'item_id' => $item->id,
+                    'image' => $year . '/' . $month . '/' . $fileNameColor,
+                    'name' => $color['name']
+                ]);
+            }
+        }
+
+        if ($request->has("images")) {
             if (!file_exists($basePath)) {
                 mkdir($basePath, 0777, true);
             }
@@ -130,7 +150,7 @@ class ItemController extends Controller
         }
         // Тепер видаляємо записи з бази даних
         $image->delete();
-        return response()->json(['message'=>'done'],200);
+        return response()->json(['message' => 'done'], 200);
     }
 
     public function show($id)
@@ -152,6 +172,7 @@ class ItemController extends Controller
             return response()->json(['message' => '404'], 404);
         }
     }
+
 //@todo make delete with image/sizes/colors
     public function delete($id)
     {
