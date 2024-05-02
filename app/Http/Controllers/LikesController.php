@@ -79,7 +79,7 @@ class LikesController extends Controller
             ->where('item_id', $request->input('item_id'))
             ->first();
         if ($like) {
-            return response()->json(['liked' => true], 200);
+            return response()->json(['liked' => true, 'like_id' => $like->id], 200);
         } else {
             return response()->json(['liked' => false], 200);
         }
