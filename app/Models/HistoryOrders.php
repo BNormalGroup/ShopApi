@@ -26,4 +26,8 @@ class HistoryOrders extends Model
     {
         return $this->belongsTo(Users::class);
     }
+    public function item()
+    {
+        return $this->belongsTo(Items::class);
+    }
 }
