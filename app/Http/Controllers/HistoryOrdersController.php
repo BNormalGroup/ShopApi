@@ -20,10 +20,11 @@ class HistoryOrdersController extends Controller
 
     public function index()
     {
-        $orders = HistoryOrders::with([
+        $orders = HistoryOrders::withOnly([
             'color:id,name', // Завантажуємо лише `id` та `name` з `color`
             'size:id,size',  // Завантажуємо лише `id` та `name` з `size`
-            'user'
+            'user',
+            'item'
         ])->get();
 
         return response()->json($orders, 200);
