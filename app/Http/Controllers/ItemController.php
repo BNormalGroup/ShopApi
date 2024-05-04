@@ -49,7 +49,6 @@ class ItemController extends Controller
             'sex' => $sex,
             'texture' => $request->texture,
             'category_id' => $request->category_id,
-            'brand_id' => $request->brand_id,
             'image' => $year . '/' . $month . '/' . $mainFileName
         ]);
 
@@ -91,8 +90,7 @@ class ItemController extends Controller
             'price' => 'required|int',
             'texture' => 'required|string',
             'sex' => 'required|string',
-            'category_id' => 'required|int',
-            'brand_id' => 'required|int'
+            'category_id' => 'required|int'
         ]);
 
         $dir = $_SERVER['DOCUMENT_ROOT'];
