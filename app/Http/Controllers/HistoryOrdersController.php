@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Orders\StoreRequest;
+use App\Http\Requests\Orders\UpdateOrderStatusRequest;
 use App\Http\Requests\Orders\UpdateRequest;
 use App\Models\HistoryOrders;
 use App\Models\OrderStatuses;
 use App\Models\Users;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class HistoryOrdersController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'index_by_user', 'getStatuses']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'index_by_user', 'getStatuses', 'updateStatus']]);
     }
 
     public function index()
@@ -43,6 +45,28 @@ class HistoryOrdersController extends Controller
         $data = $request->validated();
         $order = HistoryOrders::create($data);
         return response()->json($order, 200);
+    }
+
+    public function updateStatus(UpdateOrderStatusRequest $request, $orderId)
+    {
+        // Знаходимо замовлення, або повертаємо 404, якщо не знайдено
+        try {
+            $order = HistoryOrders::findOrFail($orderId);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        // Зберігаємо новий статус замовлення
+        try {
+            $order->updateOrFail(['status_id' => $request->status_id]);
+
+            return response()->json(['message' => 'Order status updated successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating order status',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function update(UpdateRequest $request, HistoryOrders $order)
