@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Orders\StoreRequest;
 use App\Http\Requests\Orders\UpdateRequest;
 use App\Models\HistoryOrders;
+use App\Models\OrderStatuses;
 use App\Models\Users;
 use Illuminate\Http\Request;
 
@@ -12,13 +13,23 @@ class HistoryOrdersController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'index_by_user']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'index_by_user', 'getStatuses']]);
     }
 
     public function index()
     {
-        $orders = HistoryOrders::get();
+        $orders = HistoryOrders::with([
+            'color:id,name', // Завантажуємо лише `id` та `name` з `color`
+            'size:id,size',  // Завантажуємо лише `id` та `name` з `size`
+            'user'
+        ])->get();
+
         return response()->json($orders, 200);
+    }
+
+    public function getStatuses(){
+        $statuses = OrderStatuses::get();
+        return response()->json($statuses, 200);
     }
 
     public function index_by_user(Users $user)
