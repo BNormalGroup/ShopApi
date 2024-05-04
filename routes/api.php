@@ -58,6 +58,12 @@ group(function () {
     Route::get('/show/{user_id}', [BasketController::class, 'show']);
 });
 
+Route::prefix('/orders')->
+group(function () {
+    Route::get('/', [\App\Http\Controllers\HistoryOrdersController::class, 'index']);
+    Route::get('/statuses', [\App\Http\Controllers\HistoryOrdersController::class, 'getStatuses']);
+});
+
 Route::prefix('/likes')->
 group(function () {
 //    Route::get('/{item}', [LikesController::class, 'index']);
