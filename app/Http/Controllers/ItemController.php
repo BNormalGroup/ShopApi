@@ -53,16 +53,16 @@ class ItemController extends Controller
 
         // Формуємо масив з товарами та додатковими даними
         foreach ($productsPaginator as $product) {
-            $productImages = $images->where('item_id', $product->id); // Зображення для цього товару
-            $productColors = $colors->where('item_id', $product->id); // Кольори для цього товару
-            $productSizes = $sizes->where('item_id', $product->id); // Розміри для цього товару
+            $productImages = array_values($images->where('item_id', $product->id)->toArray());
+            $productColors = array_values($colors->where('item_id', $product->id)->toArray());
+            $productSizes = array_values($sizes->where('item_id', $product->id)->toArray());
 
-            // Додаємо в результат об'єкт з усіма даними
+// Додаємо в результат об'єкт з усіма даними
             $result[] = [
                 'product' => $product,
-                'images' => $productImages,
-                'colors' => $productColors,
-                'sizes' => $productSizes,
+                'images' => $productImages, // Масив зображень
+                'colors' => $productColors, // Масив кольорів
+                'sizes' => $productSizes, // Масив розмірів
             ];
         }
 
@@ -76,7 +76,6 @@ class ItemController extends Controller
             ],
         ]);
     }
-
 
 
     public function store(Request $request)
