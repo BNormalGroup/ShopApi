@@ -10,7 +10,7 @@ class CategoriesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'getCategoriesWithChildren', 'getCategoryItemIds']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'getCategoriesWithChildren', 'getCategoryItemIds', 'getChildrenCategory']]);
     }
 
     public function index()
@@ -45,6 +45,12 @@ class CategoriesController extends Controller
         });
 
         return $children;
+    }
+
+    public function getChildrenCategory(Categories $category)
+    {
+        $child = $this->getChildren($category);
+        return response()->json($child, 200);
     }
 
     public function getCategoryItemIds($id)

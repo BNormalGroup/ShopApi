@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categories;
 use App\Models\ImagesItem;
 use App\Models\ItemColor;
 use App\Models\Items;
@@ -14,7 +15,7 @@ class ItemController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'store', 'update', 'delete', 'show', 'DeleteImage']]);
+        $this->middleware('auth:api', ['except' => ['index', 'store', 'update', 'delete', 'show', 'DeleteImage', 'listItem']]);
     }
 
     public function index()
@@ -22,6 +23,61 @@ class ItemController extends Controller
         $items = Items::get();
         return response()->json($items, 200);
     }
+
+    public function listItem(Request $request)
+    {
+        // Отримання параметрів
+        $sortField = $request->input('sort_field', 'name'); // Поле сортування за замовчуванням
+        $sortDirection = $request->input('sort_direction', 'asc'); // Напрямок сортування за замовчуванням
+        $perPage = $request->input('per_page', 10); // Кількість елементів на сторінці
+        $idCategory = $request->input('id_category'); // Ідентифікатор категорії
+
+        // Отримуємо ідентифікатори підкатегорій
+        $childCategoriesIds = Categories::where('id', $idCategory)
+            ->orWhere('parent_id', $idCategory)
+            ->pluck('id');
+
+        // Отримуємо товари з пагінацією
+        $productsPaginator = Items::whereIn('category_id', $childCategoriesIds) // Отримання товарів за категоріями
+        ->orderBy($sortField, $sortDirection) // Сортування
+        ->paginate($perPage); // Пагінація
+
+        // Масив для результату
+        $result = [];
+
+        // Отримуємо додаткові дані (зображення, кольори, розміри)
+        $productIds = $productsPaginator->pluck('id');
+        $images = ImagesItem::whereIn('item_id', $productIds)->get();
+        $colors = ItemColor::whereIn('item_id', $productIds)->get();
+        $sizes = ItemSize::whereIn('item_id', $productIds)->get();
+
+        // Формуємо масив з товарами та додатковими даними
+        foreach ($productsPaginator as $product) {
+            $productImages = $images->where('item_id', $product->id); // Зображення для цього товару
+            $productColors = $colors->where('item_id', $product->id); // Кольори для цього товару
+            $productSizes = $sizes->where('item_id', $product->id); // Розміри для цього товару
+
+            // Додаємо в результат об'єкт з усіма даними
+            $result[] = [
+                'product' => $product,
+                'images' => $productImages,
+                'colors' => $productColors,
+                'sizes' => $productSizes,
+            ];
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $result, // Масив товарів з додатковими даними
+            'pagination' => [
+                'current_page' => $productsPaginator->currentPage(),
+                'last_page' => $productsPaginator->lastPage(),
+                'total' => $productsPaginator->total(),
+            ],
+        ]);
+    }
+
+
 
     public function store(Request $request)
     {

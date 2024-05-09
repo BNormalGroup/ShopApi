@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BasketController;
-use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LikesController;
@@ -26,24 +25,19 @@ group(function () {
     Route::get('/', [CategoriesController::class, 'index']);
     Route::get('/child', [CategoriesController::class, 'getCategoriesWithChildren']);
     Route::get('/items/{id}', [CategoriesController::class, 'getCategoryItemIds']);
+    Route::get('/child/{category}', [CategoriesController::class, 'getChildrenCategory']);
     Route::post('/', [CategoriesController::class, 'store']);
     Route::post('/{category}', [CategoriesController::class, 'update']);
     Route::get('/show/{id}', [CategoriesController::class, 'show']);
     Route::delete('/{category}', [CategoriesController::class, 'delete']);
+
 });
 
-Route::prefix('/brands')->
-group(function () {
-    Route::get('/', [BrandsController::class, 'index']);
-    Route::post('/', [BrandsController::class, 'store']);
-    Route::post('/{brand}', [BrandsController::class, 'update']);
-    Route::delete('/{brand}', [BrandsController::class, 'delete']);
-    Route::get('/show/{id}', [BrandsController::class, 'show']);
-});
 
 Route::prefix('/items')->
 group(function () {
     Route::get('/', [ItemController::class, 'index']);
+    Route::get('/list', [ItemController::class, 'listItem']);
     Route::post('/', [ItemController::class, 'store']);
     Route::get('/show/{id}', [ItemController::class, 'show']);
     Route::post('/{id}', [ItemController::class, 'update']);
