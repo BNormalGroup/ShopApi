@@ -15,13 +15,52 @@ class ItemController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'store', 'update', 'delete', 'show', 'DeleteImage', 'listItem']]);
+        $this->middleware('auth:api', ['except' => ['index', 'store', 'update', 'delete', 'show', 'DeleteImage', 'listItem', 'search']]);
     }
 
     public function index()
     {
         $items = Items::get();
         return response()->json($items, 200);
+    }
+
+    public function search(Request $request)
+    {
+        // Отримуємо параметри пошуку з запиту
+        $keyword = $request->input('keyword');
+        $keyword = mb_strtolower($keyword, 'UTF-8');
+
+        // Виконуємо пошук у базі даних за ключовим словом
+        $products = Items::whereRaw('LOWER(name) LIKE ?', ['%' . $keyword . '%'])
+            ->orWhereRaw('LOWER(description) LIKE ?', ['%' . $keyword . '%'])
+            ->get();
+
+        $result = [];
+
+        // Отримуємо додаткові дані (зображення, кольори, розміри)
+        $productIds = $products->pluck('id');
+        $images = ImagesItem::whereIn('item_id', $productIds)->get();
+        $colors = ItemColor::whereIn('item_id', $productIds)->get();
+        $sizes = ItemSize::whereIn('item_id', $productIds)->get();
+
+        // Формуємо масив з товарами та додатковими даними
+        foreach ($products as $product) {
+            $productImages = array_values($images->where('item_id', $product->id)->toArray());
+            $productColors = array_values($colors->where('item_id', $product->id)->toArray());
+            $productSizes = array_values($sizes->where('item_id', $product->id)->toArray());
+
+            // Додаємо в результат об'єкт з усіма даними
+            $result[] = [
+                'product' => $product,
+                'images' => $productImages, // Масив зображень
+                'colors' => $productColors, // Масив кольорів
+                'sizes' => $productSizes, // Масив розмірів
+            ];
+        }
+
+
+        // Повертаємо результат у форматі JSON
+        return response()->json($result);
     }
 
     public function listItem(Request $request)
