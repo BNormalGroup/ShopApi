@@ -38,6 +38,7 @@ Route::prefix('/items')->
 group(function () {
     Route::get('/', [ItemController::class, 'index']);
     Route::get('/list', [ItemController::class, 'listItem']);
+    Route::get('/search', [ItemController::class, 'search']);
     Route::post('/', [ItemController::class, 'store']);
     Route::get('/show/{id}', [ItemController::class, 'show']);
     Route::post('/{id}', [ItemController::class, 'update']);
