@@ -9,6 +9,6 @@ class Basket extends Model
 {
     use HasFactory;
     protected $table = 'basket';
-    protected $fillable = ['user_id', 'item_id'];
+    protected $fillable = ['user_id', 'item_id', 'colour','size','quantity'];
 
 }

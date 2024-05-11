@@ -12,7 +12,10 @@ class BasketController extends Controller
     {
         $basket = Basket::create([
             'user_id' => $request->user_id,
-            'item_id' => $request->item_id
+            'item_id' => $request->item_id,
+            'colour' => $request->colour,
+            'size' => $request->size,
+            'quantity' => $request->quantity
         ]);
         return $basket;
     }
