@@ -15,7 +15,7 @@ class HistoryOrdersController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'index_by_user', 'getStatuses', 'updateStatus']]);
+        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'index_by_user', 'getStatuses', 'updateStatus','getUserOrders']]);
     }
 
     public function index()
@@ -35,7 +35,7 @@ class HistoryOrdersController extends Controller
         return response()->json($statuses, 200);
     }
 
-    public function index_by_user(Users $user)
+    public function getUserOrders(Users $user)
     {
         $orders = $user->orders;
         return response()->json($orders, 200);

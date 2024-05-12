@@ -56,6 +56,7 @@ group(function () {
 Route::prefix('/orders')->
 group(function () {
     Route::get('/', [\App\Http\Controllers\HistoryOrdersController::class, 'index']);
+    Route::get('/user/{user}', [\App\Http\Controllers\HistoryOrdersController::class, 'getUserOrders']);
     Route::get('/statuses', [\App\Http\Controllers\HistoryOrdersController::class, 'getStatuses']);
     Route::post('/updateStatus/{orderId}', [\App\Http\Controllers\HistoryOrdersController::class, 'updateStatus']);
 });

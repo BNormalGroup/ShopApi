@@ -30,4 +30,8 @@ class HistoryOrders extends Model
     {
         return $this->belongsTo(Items::class);
     }
+    public function status()
+    {
+        return $this->belongsTo(OrderStatuses::class);
+    }
 }
