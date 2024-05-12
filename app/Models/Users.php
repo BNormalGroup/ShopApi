@@ -45,8 +45,10 @@ class Users extends Authenticatable implements JWTSubject
 
     public function orders()
     {
-        return $this->hasMany(HistoryOrders::class, 'user_id','id');
+        return $this->hasMany(HistoryOrders::class, 'user_id', 'id')
+            ->with(['color:id,name', 'size:id,size', 'item', 'status:id,status']);
     }
+
     /**
      * The attributes that should be cast.
      *

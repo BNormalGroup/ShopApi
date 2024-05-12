@@ -9,5 +9,5 @@ class OrderStatuses extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['status'];
+    protected $fillable = ['id', 'status'];
 }
