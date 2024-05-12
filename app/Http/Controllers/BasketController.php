@@ -30,9 +30,7 @@ class BasketController extends Controller
             $itemsAll[] = $item;
         }
 
-        return response()->json([
-            'items' => $itemsAll,
-        ],200);
+        return response()->json( $itemsAll,200);
     }
 
     public function delete($id)
