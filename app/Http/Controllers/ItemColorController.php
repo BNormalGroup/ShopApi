@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ItemColor;
-use Illuminate\Http\Request;
 
 class ItemColorController extends Controller
 {
-
+    public function delete(ItemColor $color)
+    {
+        $color->delete();
+        return response()->json(['message' => 'Done'], 200);
+    }
 }

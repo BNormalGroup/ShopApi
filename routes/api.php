@@ -90,3 +90,13 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
+
+Route::prefix('/color')->
+group(function () {
+    Route::delete('/{color}', [\App\Http\Controllers\ItemColorController::class, 'delete']);
+});
+
+Route::prefix('/size')->
+group(function () {
+    Route::delete('/{size}', [\App\Http\Controllers\ItemSizeController::class, 'delete']);
+});

@@ -153,12 +153,8 @@ class ItemController extends Controller
             ]);
         }
         foreach ($request['colors'] as $color) {
-            $imageColor = $color['image'];
-            $fileNameColor = uniqid() . '.' . $imageColor->getClientOriginalExtension();
-            $imageColor->move($basePath, $fileNameColor);
             ItemColor::create([
                 'item_id' => $item->id,
-                'image' => $year . '/' . $month . '/' . $fileNameColor,
                 'name' => $color['name']
             ]);
         }
@@ -203,12 +199,8 @@ class ItemController extends Controller
         }
         if ($request->has("colors")) {
             foreach ($request['colors'] as $color) {
-                $imageColor = $color['image'];
-                $fileNameColor = uniqid() . '.' . $imageColor->getClientOriginalExtension();
-                $imageColor->move($basePath, $fileNameColor);
                 ItemColor::create([
                     'item_id' => $item->id,
-                    'image' => $year . '/' . $month . '/' . $fileNameColor,
                     'name' => $color['name']
                 ]);
             }
