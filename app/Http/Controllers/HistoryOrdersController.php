@@ -41,11 +41,9 @@ class HistoryOrdersController extends Controller
         return response()->json($orders, 200);
     }
 
-    public function store(StoreRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated();
-        $order = HistoryOrders::create($data);
-        return response()->json($order, 200);
+
     }
 
     public function updateStatus(UpdateOrderStatusRequest $request, $orderId)

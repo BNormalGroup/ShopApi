@@ -9,7 +9,7 @@ class HistoryOrders extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['item_id', 'user_id', 'color_id', 'size_id', 'status_id'];
+    protected $fillable = [ 'user_id', 'size_id', 'status_id'];
 
     // Відношення до таблиці `Colors`
     public function color()
