@@ -28,10 +28,15 @@ class HistoryOrders extends Model
     }
     public function item()
     {
-        return $this->belongsTo(Items::class);
+        return $this->hasMany(OrderProduct::class, 'order_id')->with(['item']);
     }
     public function status()
     {
         return $this->belongsTo(OrderStatuses::class);
+    }
+
+    public function delivery_address()
+    {
+        return $this->belongsTo(OrderDeliveryAddress::class);
     }
 }
