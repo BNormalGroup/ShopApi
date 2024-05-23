@@ -6,7 +6,11 @@ use App\Models\Bannes;
 use App\Models\Users;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 class AuthController extends Controller
 {
     /**
@@ -16,7 +20,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login','register', 'update', 'changePassword']]);
     }
     /**
      * Get the authenticated User.
@@ -80,6 +84,50 @@ class AuthController extends Controller
     public function me()
     {
         return response()->json(auth()->user());
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
+            'birthday' => 'required|string|max:255',
+        ]);
+
+        $user = Auth::user();
+        $user->firstName = $request->input('firstName');
+        $user->lastName = $request->input('lastName');
+        $user->email = $request->input('email');
+        $user->birthday = $request->input('birthday');
+        $user->save();
+
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'access_token' => $token
+        ]);
+    }
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string|max:255',
+            'new_password' => 'required|string|max:255|min:6',
+        ]);
+
+        $user = Auth::user();
+
+        // Перевіряємо, чи співпадає поточний пароль
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Неправильний поточний пароль'], 400);
+        }
+
+        // Оновлюємо пароль
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json(['message' => 'Пароль успішно змінено'], 200);
     }
 
     /**

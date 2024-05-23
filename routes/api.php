@@ -82,7 +82,7 @@ group(function () {
 });
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => ['api'],
     'prefix' => 'auth'
 ], function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -91,6 +91,10 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
+
+Route::post('auth/update', [AuthController::class, 'update'])->middleware('auth');
+Route::post('auth/updatePassword', [AuthController::class, 'changePassword'])->middleware('auth');
+
 
 Route::prefix('/color')->
 group(function () {
