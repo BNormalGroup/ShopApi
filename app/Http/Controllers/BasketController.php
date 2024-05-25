@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class BasketController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     public function store(Request $request)
     {
         $basket = Basket::create([
