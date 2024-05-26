@@ -26,15 +26,29 @@ class BasketController extends Controller
 
     public function show($id)
     {
-        $itemsAll = [];
-        $itemsId= Basket::where('user_id', $id)->get();
+        $baskets = Basket::where('user_id', $id)->with('item')->get();
 
-        foreach ($itemsId as $item) {
-            $item = Items::where('id', $item['item_id'])->first();
-            $itemsAll[] = $item;
-        }
+        $itemsAll = $baskets->map(function($basket) {
+            return [
+                'id' => $basket->id,
+                'product' => [
+                    'id' => $basket->item->id,
+                    'image' => $basket->item->image,
+                    'name' => $basket->item->name,
+                    'description' => $basket->item->description,
+                    'texture' => $basket->item->texture,
+                    'price' => $basket->item->price,
+                    'category_id' => $basket->item->category_id,
+                    'sex' => $basket->item->sex,
+                ],
+                'color' => $basket->colour,
+                'quantity' => $basket->quantity,
+                'sizes' => $basket->item->sizes->pluck('size'),
+                'selectedSize' => $basket->size,
+            ];
+        });
 
-        return response()->json( $itemsAll,200);
+        return response()->json($itemsAll, 200);
     }
 
     public function delete($id)
