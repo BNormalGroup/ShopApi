@@ -12,7 +12,7 @@ class UserBannesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete','index_by_user']]);
+        $this->middleware('auth:api');
     }
 
     public function index()

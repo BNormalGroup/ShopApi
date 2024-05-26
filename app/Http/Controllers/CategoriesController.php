@@ -10,7 +10,7 @@ class CategoriesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'getCategoriesWithChildren', 'getCategoryItemIds', 'getChildrenCategory']]);
+        $this->middleware('auth:api', ['except' => ['index', 'show', 'getCategoriesWithChildren', 'getCategoryItemIds', 'getChildrenCategory']]);
     }
 
     public function index()
