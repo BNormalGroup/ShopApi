@@ -241,7 +241,7 @@ class ItemController extends Controller
     {
         $product = Items::where('id', $id)->first();
         $images = ImagesItem::where('item_id', $id)->get();
-        $sizes = ItemSize::where('item_id', $id)->get();
+        $sizes = ItemSize::where('item_id', $id)->pluck('size');;
         $colors = ItemColor::where('item_id', $id)->get();
 
         if ($product != null) {
