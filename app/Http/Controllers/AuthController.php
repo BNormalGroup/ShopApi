@@ -20,7 +20,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register', 'update', 'changePassword']]);
+        $this->middleware('auth:api', ['except' => ['login','register']]);
     }
     /**
      * Get the authenticated User.
@@ -73,7 +73,11 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        return $this->respondWithToken($token);
+        $isBanned = Bannes::where('user_id', auth()->user()->id)->exists();
+        if($isBanned)
+            return response()->json(['banned' => 'true'], 401);
+        else
+            return $this->respondWithToken($token);
     }
 
     /**

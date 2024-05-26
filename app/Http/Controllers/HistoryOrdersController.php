@@ -18,7 +18,7 @@ class HistoryOrdersController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'index_by_user', 'getStatuses', 'updateStatus','getUserOrders']]);
+        $this->middleware('auth:api');
     }
 
     public function index()

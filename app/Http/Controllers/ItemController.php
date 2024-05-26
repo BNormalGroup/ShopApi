@@ -15,7 +15,7 @@ class ItemController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'store', 'update', 'delete', 'show', 'DeleteImage', 'listItem', 'search']]);
+        $this->middleware('auth:api', ['except' => ['index','show', 'listItem', 'search']]);
     }
 
     public function index()

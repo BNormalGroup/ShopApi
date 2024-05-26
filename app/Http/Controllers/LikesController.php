@@ -16,7 +16,7 @@ class LikesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','store','update', 'delete', 'show', 'check']]);
+        $this->middleware('auth:api');
     }
 
     public function index(Items $item)
