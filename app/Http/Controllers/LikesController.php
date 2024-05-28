@@ -34,24 +34,29 @@ class LikesController extends Controller
 
     public function show($userId)
     {
-      $dataLikes = Likes::where('user_id',$userId)->get();
-      $products = [];
-      foreach ($dataLikes as $like)
-      {
-          $product = Items::where('id', $like->item_id)->first();
-          $images = ImagesItem::where('item_id', $like->item_id)->get();
-          $sizes = ItemSize::where('item_id', $like->item_id)->get();
-          $colors = ItemColor::where('item_id', $like->item_id)->get();
+        $dataLikes = Likes::where('user_id', $userId)->get();
+        $productIds = $dataLikes->pluck('item_id');
+        $items = Items::whereIn('id', $productIds)->get();
+        $images = ImagesItem::whereIn('item_id', $productIds)->get();
+        $colors = ItemColor::whereIn('item_id', $productIds)->get();
+        $sizes = ItemSize::whereIn('item_id', $productIds)->get();
+        $result = [];
+        // Формуємо масив з товарами та додатковими даними
+        foreach ($items as $product) {
+            $productImages = array_values($images->where('item_id', $product->id)->toArray());
+            $productColors = array_values($colors->where('item_id', $product->id)->toArray());
+            $productSizes = array_values($sizes->where('item_id', $product->id)->toArray());
 
-          $productData = [
-              'product' => $product,
-              'images' => $images,
-              'colors' => $colors,
-              'sizes' => $sizes,
-          ];
-          $products[] = $productData;
-      }
-      return response()->json($products,200);
+// Додаємо в результат об'єкт з усіма даними
+            $result[] = [
+                'product' => $product,
+                'images' => $productImages, // Масив зображень
+                'colors' => $productColors, // Масив кольорів
+                'sizes' => $productSizes, // Масив розмірів
+            ];
+        }
+
+        return response()->json($result, 200);
     }
 
     public function update(UpdateRequest $request, Likes $like)
@@ -60,13 +65,14 @@ class LikesController extends Controller
         $like->update($data);
         return response()->json($like, 200);
     }
+
     public function delete(Likes $like)
     {
         $like->delete();
-        return response()->json(['message'=>'done'],200);
+        return response()->json(['message' => 'done'], 200);
     }
 
-    public function check (Request $request)
+    public function check(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|integer',

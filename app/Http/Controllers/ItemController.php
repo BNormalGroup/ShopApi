@@ -21,7 +21,27 @@ class ItemController extends Controller
     public function index()
     {
         $items = Items::get();
-        return response()->json($items, 200);
+        $productIds = $items->pluck('id');
+        $images = ImagesItem::whereIn('item_id', $productIds)->get();
+        $colors = ItemColor::whereIn('item_id', $productIds)->get();
+        $sizes = ItemSize::whereIn('item_id', $productIds)->get();
+        $result = [];
+        // Формуємо масив з товарами та додатковими даними
+        foreach ($items as $product) {
+            $productImages = array_values($images->where('item_id', $product->id)->toArray());
+            $productColors = array_values($colors->where('item_id', $product->id)->toArray());
+            $productSizes = array_values($sizes->where('item_id', $product->id)->toArray());
+
+// Додаємо в результат об'єкт з усіма даними
+            $result[] = [
+                'product' => $product,
+                'images' => $productImages, // Масив зображень
+                'colors' => $productColors, // Масив кольорів
+                'sizes' => $productSizes, // Масив розмірів
+            ];
+        }
+
+        return response()->json($result, 200);
     }
 
     public function search(Request $request)
@@ -241,7 +261,7 @@ class ItemController extends Controller
     {
         $product = Items::where('id', $id)->first();
         $images = ImagesItem::where('item_id', $id)->get();
-        $sizes = ItemSize::where('item_id', $id)->pluck('size');;
+        $sizes = ItemSize::where('item_id', $id)->get();
         $colors = ItemColor::where('item_id', $id)->get();
 
         if ($product != null) {
