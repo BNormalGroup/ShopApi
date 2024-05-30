@@ -302,6 +302,8 @@ class ItemController extends Controller
         }
         DB::table('item_colors')->where('item_id', $id)->delete();
         DB::table('item_sizes')->where('item_id', $id)->delete();
+        DB::table('order_products')->where('item_id', $id)->delete();
+        DB::table('basket')->where('item_id', $id)->delete();
         DB::table('items')
             ->where('id', $id)
             ->delete();

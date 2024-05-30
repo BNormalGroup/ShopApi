@@ -23,7 +23,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'user_id' => 'required|exists:users,id',
-            'reason' => 'required|max:50|regex:/^[\pL\s]+$/u'
+            'reason' => 'required|max:50'
         ];
     }
 }
