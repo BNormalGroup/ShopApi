@@ -88,7 +88,7 @@ class ItemController extends Controller
         // Отримання параметрів
         $sortField = $request->input('sort_field', 'name'); // Поле сортування за замовчуванням
         $sortDirection = $request->input('sort_direction', 'asc'); // Напрямок сортування за замовчуванням
-        $perPage = $request->input('per_page', 10); // Кількість елементів на сторінці
+        $perPage = $request->input('per_page', 9); // Кількість елементів на сторінці
         $idCategory = $request->input('id_category'); // Ідентифікатор категорії
 
         // Отримуємо ідентифікатори підкатегорій
