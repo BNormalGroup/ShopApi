@@ -15,7 +15,7 @@ class ItemController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index','show', 'listItem', 'search']]);
+        $this->middleware('auth:api', ['except' => ['index','show', 'listItem', 'search', 'latestProducts']]);
     }
 
     public function index()
@@ -308,5 +308,11 @@ class ItemController extends Controller
             ->where('id', $id)
             ->delete();
         return response()->json(['message' => 'Done'], 200);
+    }
+
+    public function latestProducts($sex)
+    {
+        $products = Items::where('sex', $sex)->latest()->take(8)->get();
+        return response()->json($products, 200);
     }
 }

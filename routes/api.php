@@ -41,6 +41,7 @@ group(function () {
     Route::get('/search', [ItemController::class, 'search']);
     Route::post('/', [ItemController::class, 'store']);
     Route::get('/show/{id}', [ItemController::class, 'show']);
+    Route::get('/latest/{sex}', [ItemController::class, 'latestProducts']);
     Route::post('/{id}', [ItemController::class, 'update']);
     Route::delete('/{id}', [ItemController::class, 'delete']);
     Route::delete('/deleteImage/{image}', [ItemController::class, 'DeleteImage']);
